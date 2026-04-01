@@ -1,42 +1,34 @@
 ---
 title: "Reproducible Research: Peer Assessment 1"
 author: "Isi"
-date: "`r Sys.Date()`"
+date: "2026-04-01"
 output: md_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(
-  echo = TRUE,
-  fig.path = "figure/",
-  fig.width = 7,
-  fig.height = 5
-)
 
-if (!file.exists("activity.csv")) {
-  if (!file.exists("activity.zip")) {
-    download.file(
-      "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip",
-      destfile = "activity.zip",
-      mode = "wb"
-    )
-  }
-  unzip("activity.zip", files = "activity.csv")
-}
-
-activity <- read.csv("activity.csv")
-activity$date <- as.Date(activity$date)
-```
 
 ## Loading and preprocessing the data
 
-```{r}
+
+``` r
 summary(activity)
+```
+
+```
+##      steps             date               interval     
+##  Min.   :  0.00   Min.   :2012-10-01   Min.   :   0.0  
+##  1st Qu.:  0.00   1st Qu.:2012-10-16   1st Qu.: 588.8  
+##  Median :  0.00   Median :2012-10-31   Median :1177.5  
+##  Mean   : 37.38   Mean   :2012-10-31   Mean   :1177.5  
+##  3rd Qu.: 12.00   3rd Qu.:2012-11-15   3rd Qu.:1766.2  
+##  Max.   :806.00   Max.   :2012-11-30   Max.   :2355.0  
+##  NA's   :2304
 ```
 
 ## What is mean total number of steps taken per day?
 
-```{r}
+
+``` r
 daily_totals <- aggregate(steps ~ date, data = activity, FUN = sum, na.rm = TRUE)
 
 hist(
@@ -49,13 +41,16 @@ hist(
 )
 ```
 
-The mean total number of steps taken per day is `r round(mean(daily_totals$steps), 2)`.
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png)
 
-The median total number of steps taken per day is `r median(daily_totals$steps)`.
+The mean total number of steps taken per day is 1.076619 &times; 10<sup>4</sup>.
+
+The median total number of steps taken per day is 10765.
 
 ## What is the average daily activity pattern?
 
-```{r}
+
+``` r
 interval_means <- aggregate(steps ~ interval, data = activity, FUN = mean, na.rm = TRUE)
 
 plot(
@@ -70,13 +65,16 @@ plot(
 )
 ```
 
-The 5-minute interval with the highest average number of steps is `r interval_means$interval[which.max(interval_means$steps)]`.
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png)
+
+The 5-minute interval with the highest average number of steps is 835.
 
 ## Imputing missing values
 
-The total number of missing values in the dataset is `r sum(is.na(activity$steps))`.
+The total number of missing values in the dataset is 2304.
 
-```{r}
+
+``` r
 filled_activity <- activity
 interval_lookup <- setNames(interval_means$steps, interval_means$interval)
 missing_rows <- is.na(filled_activity$steps)
@@ -95,15 +93,18 @@ hist(
 )
 ```
 
-The mean total number of steps taken per day after imputation is `r round(mean(filled_daily_totals$steps), 2)`.
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png)
 
-The median total number of steps taken per day after imputation is `r round(median(filled_daily_totals$steps), 2)`.
+The mean total number of steps taken per day after imputation is 1.076619 &times; 10<sup>4</sup>.
+
+The median total number of steps taken per day after imputation is 1.076619 &times; 10<sup>4</sup>.
 
 Imputing missing values increases the totals for days that were previously recorded as zero because `sum(..., na.rm = TRUE)` ignores missing values. After filling each missing observation with the mean for its interval, the daily totals better reflect the overall activity pattern.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-```{r}
+
+``` r
 day_index <- as.POSIXlt(filled_activity$date)$wday
 filled_activity$day_type <- ifelse(day_index %in% c(0, 6), "weekend", "weekday")
 filled_activity$day_type <- factor(filled_activity$day_type, levels = c("weekday", "weekend"))
@@ -140,5 +141,7 @@ with(
   )
 )
 ```
+
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png)
 
 The weekday pattern shows a sharper morning peak, while weekend activity is more spread out through the day.
