@@ -2,7 +2,9 @@
 title: "Reproducible Research: Peer Assessment 1"
 author: "Isi"
 date: "2026-04-01"
-output: md_document
+output:
+  html_document:
+    keep_md: true
 ---
 
 
@@ -99,7 +101,7 @@ The mean total number of steps taken per day after imputation is 1.076619 &times
 
 The median total number of steps taken per day after imputation is 1.076619 &times; 10<sup>4</sup>.
 
-Imputing missing values increases the totals for days that were previously recorded as zero because `sum(..., na.rm = TRUE)` ignores missing values. After filling each missing observation with the mean for its interval, the daily totals better reflect the overall activity pattern.
+Imputing missing values changes the distribution by replacing missing observations with the average value for each interval. In this dataset, the mean stays essentially the same while the median increases, which suggests that the imputed values mainly affect the center of the daily-total distribution rather than shifting the overall average.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
